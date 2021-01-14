@@ -1,2 +1,2 @@
-# El Bérmedano
+# El Bermédano
 Telegram bot about El Bermédano

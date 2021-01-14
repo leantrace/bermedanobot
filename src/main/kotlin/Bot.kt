@@ -106,7 +106,7 @@ class Bot : TelegramLongPollingBot() {
                 text == "no" -> send ("Yes")
                 hated != null -> send("I hate ${hated}!")
                 loved != null -> send("I love ${loved}!")
-                listOf("meme").any { it in text } -> sendImage("", memes.choose())
+                listOf("meme").any { it in text } -> sendImage(memes.choose(), "")
                 listOf("joke", "witz").any { it in text } -> jokes.choose().let {
                     if (it.image == null) send(it.text)
                     else sendImage(it.image, it.text)
