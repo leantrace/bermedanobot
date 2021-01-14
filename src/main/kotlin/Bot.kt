@@ -101,6 +101,8 @@ class Bot : TelegramLongPollingBot() {
 
             when {
                 text.startsWith("/help") -> send("Chatte einfach ganz normal, ich werd schon etwas sagen, wenn ich etwas zu sagen habe...")
+                listOf("cat").any { it in text } -> sendCatImage("",text)
+                listOf("meme").any { it in text } -> sendImage(memes.choose(), "meme")
                 react.any { it in text } -> send(quotes.choose())
                 members.any { it.key in text } -> {
                     val memberKey = members.keys.find { it in text }
@@ -115,8 +117,6 @@ class Bot : TelegramLongPollingBot() {
                 text == "no" -> send ("Yes")
                 hated != null -> send("I hate ${hated}!")
                 loved != null -> send("I love ${loved}!")
-                listOf("cat").any { it in text } -> sendCatImage("",text)
-                listOf("meme").any { it in text } -> sendImage(memes.choose(), "meme")
                 listOf("joke", "witz").any { it in text } -> jokes.choose().let {
                     if (it.image == null) send(it.text)
                     else sendImage(it.image, it.text)
