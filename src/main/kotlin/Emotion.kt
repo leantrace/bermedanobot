@@ -1,2 +1,2 @@
-val hates = listOf("cool", "kalt")
-val loves = listOf("yoga", "kite").map { Regex(it) }
+val hates = listOf("kalt", "rocks")
+val loves = listOf("yoga", "kite", "sand", "upwind").map { Regex(it) }
