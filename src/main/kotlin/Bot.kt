@@ -87,7 +87,7 @@ class Bot : TelegramLongPollingBot() {
                 println("Send Photo: "+name)
                 setChatId(chatId)
                 setCaption(caption)
-                setPhoto(name, Thread.currentThread().contextClassLoader.getResourceAsStream(name))
+                setPhoto(caption, Thread.currentThread().contextClassLoader.getResourceAsStream(name))
                 // setPhoto(name, URL("https://i.imgflip.com/22bdq6.jpg").openStream())
             })
 
@@ -96,7 +96,7 @@ class Bot : TelegramLongPollingBot() {
                 setCaption(caption)
                 val m = if (mood != null) "/$mood" else ""
                 val c = if (caption != null) "/says/$caption" else ""
-                setPhoto("", URL("https://cataas.com/cat${m}${c}").openStream())
+                setPhoto("cat", URL("https://cataas.com/cat${m}${c}").openStream())
             })
 
             when {
@@ -116,7 +116,7 @@ class Bot : TelegramLongPollingBot() {
                 hated != null -> send("I hate ${hated}!")
                 loved != null -> send("I love ${loved}!")
                 listOf("cat").any { it in text } -> sendCatImage("",text)
-                listOf("meme").any { it in text } -> sendImage(memes.choose(), "")
+                listOf("meme").any { it in text } -> sendImage(memes.choose(), "meme")
                 listOf("joke", "witz").any { it in text } -> jokes.choose().let {
                     if (it.image == null) send(it.text)
                     else sendImage(it.image, it.text)
