@@ -86,7 +86,8 @@ class Bot : TelegramLongPollingBot() {
             fun sendImage(name: String, caption: String) = execute(SendPhoto().apply {
                 setChatId(chatId)
                 setCaption(caption)
-                setPhoto(name, URL("https://i.imgflip.com/22bdq6.jpg").openStream())
+                setPhoto(name, Thread.currentThread().contextClassLoader.getResourceAsStream(name))
+                // setPhoto(name, URL("https://i.imgflip.com/22bdq6.jpg").openStream())
             })
 
             when {
@@ -99,12 +100,13 @@ class Bot : TelegramLongPollingBot() {
                 text == "yes" -> {
                     send ("No")
                 }
-                text == "meme" -> {
+                text == "memetest" -> {
                     sendPostRequest(chatId, "","")
                 }
                 text == "no" -> send ("Yes")
                 hated != null -> send("I hate ${hated}!")
                 loved != null -> send("I love ${loved}!")
+                listOf("meme").any { it in text } -> sendImage("", memes.choose())
                 listOf("joke", "witz").any { it in text } -> jokes.choose().let {
                     if (it.image == null) send(it.text)
                     else sendImage(it.image, it.text)
