@@ -21,14 +21,11 @@ fun main() {
 
 class Bot : TelegramLongPollingBot() {
     private val rnd = Random
-    private val react = listOf("virus", "viral", "corona", "sick", "ill", "krank", "flu", "grippe", "fever", "fieber", "hust", "keuch", "cough", "gesundheit", "health", """home\s*office""").map { Regex(it) }
-    private val beer = listOf("beer", "bier", "cerveza", "biere", "birra", "öl", "øl", "ale")
-    private val country = listOf("mexican", "dutch", "swiss", "german", "czech", "spanish", "japanese", "chinese")
-    private val taste = listOf("taste", "geschmack", "durst", "drink", "hungry", "hunger", "eat", "essen")
-
+    private val react = listOf("kite", "surf", "wind").map { Regex(it) }
     private val members = mapOf (
-            "sabi" to listOf("musst du nicht ins Beans & Nuts?"),
-            "tinu" to listOf("geh Broforce zocken, bljat")
+        "alex" to listOf("Meinst du Alex den Kite-Wolverine?!"),
+        "stibu" to listOf("Yo dr Stibu has drum o!"),
+        "isa" to listOf("Die Isa? o.O Die Upwind-Isa?!?")
     )
 
     init {
@@ -36,7 +33,7 @@ class Bot : TelegramLongPollingBot() {
             throw RuntimeException("Set BOT_USER environment variable. If you need to generate it, contact: https://telegram.me/botfather")
         }
         if (System.getenv("BOT_TOKEN") == null) {
-            throw RuntimeException("Set BOT_USER environment variable. If you need to generate it, contact: https://telegram.me/botfather")
+            throw RuntimeException("Set BOT_TOKEN environment variable. If you need to generate it, contact: https://telegram.me/botfather")
         }
     }
 
@@ -92,26 +89,21 @@ class Bot : TelegramLongPollingBot() {
             })
 
             when {
-                text.startsWith("/help") -> send("Chatte einfach ganz normal im WG chat, ich werd schon etwas sagen, wenn ich etwas zu sagen habe...")
+                text.startsWith("/help") -> send("Chatte einfach ganz normal, ich werd schon etwas sagen, wenn ich etwas zu sagen habe...")
                 react.any { it in text } -> send(quotes.choose())
-                beer.any { it in text } -> send("Can I have a ${country.choose()} beer, please?")
-                /*members.any { it in text } -> {
-                    val member = members.find { it in text }
-                    if (member == "sabi") {
-                        send("${member} musst du nicht ins Beans & Nuts?")
-                    }
-                    if (member == "tinu") {
-                        send("${member} geh Broforce zocken, bljat")
-                    }
-                }*/
+                members.any { it.key in text } -> {
+                    val memberKey = members.keys.find { it in text }
+                    members[memberKey]?.let { send(it.random()) }
+                }
                 text == "yes" -> {
+                    send ("No")
+                }
+                text == "meme" -> {
                     sendPostRequest(chatId, "","")
-                    // send ("No")
                 }
                 text == "no" -> send ("Yes")
                 hated != null -> send("I hate ${hated}!")
                 loved != null -> send("I love ${loved}!")
-                taste.any { it in text } -> send("Try me! I have an excellent taste!")
                 listOf("joke", "witz").any { it in text } -> jokes.choose().let {
                     if (it.image == null) send(it.text)
                     else sendImage(it.image, it.text)
