@@ -29,6 +29,7 @@ class Bot : TelegramLongPollingBot() {
     )
 
     init {
+        println("=== Init Bot ===")
         if (System.getenv("BOT_USER") == null) {
             throw RuntimeException("Set BOT_USER environment variable. If you need to generate it, contact: https://telegram.me/botfather")
         }
