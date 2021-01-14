@@ -95,7 +95,7 @@ class Bot : TelegramLongPollingBot() {
                 setChatId(chatId)
                 setCaption(caption)
                 val m = if (mood != null) "/$mood" else ""
-                val c = if (caption != null) "/says/$caption" else ""
+                val c = if (caption != null) "/says/${caption.replace("cat\\s*".toRegex(),"")}" else ""
                 setPhoto("cat", URL("https://cataas.com/cat${m}${c}").openStream())
             })
 
