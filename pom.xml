@@ -25,7 +25,7 @@
     <scm>
         <connection>scm:git@github.com:leantrace/bermedanobot.git</connection>
         <developerConnection>scm:git@github.com:leantrace/bermedanobot.git</developerConnection>
-        <url>https://github.com/leantrace/wgbot</url>
+        <url>https://github.com/leantrace/bermedanobot</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -142,7 +142,7 @@
                         </goals>
                         <configuration>
                             <executable>docker</executable>
-                            <commandlineArgs>build . -t leantrace/wgbot:${project.version}
+                            <commandlineArgs>build . -t leantrace/bermedanobot:${project.version}
                             </commandlineArgs>
                         </configuration>
                     </execution>
