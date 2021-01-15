@@ -23,9 +23,9 @@ class Bot : TelegramLongPollingBot() {
     private val rnd = Random
     private val react = listOf("kite", "surf", "wind").map { Regex(it) }
     private val members = mapOf (
-        "alex" to listOf("Meinst du Alex den Kite-Wolverine?!"),
-        "stibu" to listOf("Yo dr Stibu has drum o!"),
-        "isa" to listOf("Die Isa? o.O Die Upwind-Isa?!?")
+        "alex" to listOf("Meinst du Alex den Kite-Wolverine?!", "JESUS IS COMING :pray:"),
+        "stibu" to listOf("Yo dr Stibu chas drum o!", "Stibu? Dä wo immer mitem Kite umefailed?"),
+        "isa" to listOf("Die Isa? o.O Die Upwind-Isa?!?", "Die Isa? Hei Sie trinkt imfau ou mate! :mate_drink:")
     )
 
     init {
