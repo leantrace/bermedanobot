@@ -111,6 +111,9 @@ class Bot : TelegramLongPollingBot() {
                 text == "yes" -> {
                     send ("No")
                 }
+                text == "marion" -> {
+                    send ("Hello Marion")
+                }
                 text == "memetest" -> {
                     sendPostRequest(chatId, "","")
                 }
