@@ -15,12 +15,12 @@ data class ImageFlipResponse(
 fun main(args: Array<String>) {
     runBlocking {
         val client = HttpClient(Apache) { install(JsonFeature) }
-        val response = client.submitForm<String>(
+        val response = client.submitForm<ImageFlipResponse>(
             url = "https://api.imgflip.com/caption_image",
             formParameters = Parameters.build {
                 append("template_id", "123482963")
-                append("username", "")
-                append("password", "")
+                append("username", "figwam")
+                append("password", "lamas123")
                 append("text0", "Uff d..da..das habe ich nicht gewusst...")
                 append("text1", "...Uff d..da..das tut mir leid")
             })
