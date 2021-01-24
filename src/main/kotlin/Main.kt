@@ -15,7 +15,7 @@ data class ImageFlipResponse(
 fun main(args: Array<String>) {
     runBlocking {
         val client = HttpClient(Apache) { install(JsonFeature) }
-        val response = client.submitForm<ImageFlipResponse>(
+        val response = client.submitForm<String>(
             url = "https://api.imgflip.com/caption_image",
             formParameters = Parameters.build {
                 append("template_id", "123482963")
