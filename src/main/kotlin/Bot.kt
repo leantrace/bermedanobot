@@ -45,10 +45,10 @@ class Bot : TelegramLongPollingBot() {
             throw RuntimeException("Set BOT_TOKEN environment variable. If you need to generate it, contact: https://telegram.me/botfather")
         }
         if (System.getenv("IMGFLIP_PWD") == null) {
-            throw RuntimeException("Set IMAGEFLIP_PWD environment variable.")
+            throw RuntimeException("Set IMGFLIP_PWD environment variable.")
         }
         if (System.getenv("IMGFLIP_USR") == null) {
-            throw RuntimeException("Set IMAGEFLIP_USR environment variable.")
+            throw RuntimeException("Set IMGFLIP_USR environment variable.")
         }
     }
 
@@ -116,7 +116,7 @@ class Bot : TelegramLongPollingBot() {
                     val response = client.post<ImageFlipResponse> {
                         url("https://api.imgflip.com/caption_image/")
                         contentType(ContentType.Application.Json)
-                        body = ImageFlip("123482963", System.getenv("IMAGEFLIP_USR"), System.getenv("IMAGEFLIP_PWD"),
+                        body = ImageFlip("123482963", System.getenv("IMGFLIP_USR"), System.getenv("IMGFLIP_PWD"),
                             "Uff d..da..das habe ich nicht gewusst...", "...Uff d..da..das tut mir leid")
                     }
                     send(response.success)
