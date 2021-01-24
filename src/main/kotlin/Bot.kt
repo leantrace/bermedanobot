@@ -4,6 +4,7 @@ import io.ktor.client.features.json.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
+import org.apache.http.HttpResponse
 import org.telegram.telegrambots.ApiContextInitializer
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
@@ -122,7 +123,7 @@ class Bot : TelegramLongPollingBot() {
                 runBlocking {
                     val client = HttpClient(Apache) { install(JsonFeature) }
                     send("send request to https://api.imgflip.com/caption_image/")
-                    val response = client.submitForm<ImageFlipResponse>(
+                    val response = client.submitForm<HttpResponse>(
                         url = "https://api.imgflip.com/caption_image",
                         formParameters = Parameters.build {
                             append("template_id", "123482963")
@@ -131,10 +132,11 @@ class Bot : TelegramLongPollingBot() {
                             append("text0", "Uff d..da..das habe ich nicht gewusst...")
                             append("text1", "...Uff d..da..das tut mir leid")
                         })
-                    send(response.success)
+                    print(response.toString())
+                    /* send(response.success)
                     send(response.error_message ?: "")
                     send(response.data?.url ?: "")
-                    send(response.data?.page_url ?: "")
+                    send(response.data?.page_url ?: "")*/
                     client.close()
                 }
                 // setPhoto(name, URL("https://i.imgflip.com/22bdq6.jpg").openStream())
