@@ -123,7 +123,7 @@ class Bot : TelegramLongPollingBot() {
                 runBlocking {
                     val client = HttpClient(Apache) { install(JsonFeature) }
                     send("send request to https://api.imgflip.com/caption_image/")
-                    val response = client.submitForm<HttpResponse>(
+                    val response = client.submitForm<ImageFlipResponse>(
                         url = "https://api.imgflip.com/caption_image",
                         formParameters = Parameters.build {
                             append("template_id", "123482963")
