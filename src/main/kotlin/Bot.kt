@@ -130,9 +130,9 @@ class Bot : TelegramLongPollingBot() {
                             append("text0", "Uff d..da..das habe ich nicht gewusst...")
                             append("text1", "...das tut mir leid")
                         })
-                    /*if (response.success && response.data != null) {
+                    if (response.success && response.data != null) {
                         setPhoto(name, URL(response.data.url).openStream())
-                    }*/
+                    }
                     print(response.toString())
                     client.close()
                 }
