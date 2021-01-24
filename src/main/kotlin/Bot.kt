@@ -147,7 +147,7 @@ class Bot : TelegramLongPollingBot() {
                 text.startsWith("/meme") -> send(Bot().templates.keys.toString())
                 listOf("cat").any { it in text } -> sendCatImage("", text)
                 text.startsWith("meme") -> {
-                    val l = text.split(",")
+                    val l = text.split("|")
                     if (text.split("|").size > 1) {
                         sendImage(chatId, l[1], l.getOrElse(2) { "" }, l.getOrElse(3) { "" })
                     }
