@@ -4,7 +4,6 @@ import io.ktor.client.features.json.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
-import org.apache.http.HttpResponse
 import org.telegram.telegrambots.ApiContextInitializer
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
@@ -121,8 +120,8 @@ class Bot : TelegramLongPollingBot() {
                 setChatId(chatId)
                 setCaption(caption)
                 runBlocking {
-                    val client = HttpClient(Apache) { install(JsonFeature) }
-                    val response = client.submitForm<ImageFlipResponse>(
+                    val client = HttpClient(Apache)
+                    val response = client.submitForm<Any>(
                         url = "https://api.imgflip.com/caption_image",
                         formParameters = Parameters.build {
                             append("template_id", "123482963")

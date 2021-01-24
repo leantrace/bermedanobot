@@ -4,11 +4,10 @@ import io.ktor.client.features.json.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
-import org.apache.http.HttpResponse
 
 data class ImageFlipResponseData(val url: String, val page_url: String)
 data class ImageFlipResponse(
-    val success: String,
+    val success: Boolean,
     val data: ImageFlipResponseData? = null,
     val error_message: String? = null
 )
@@ -19,8 +18,8 @@ fun main(args: Array<String>) {
             url = "https://api.imgflip.com/caption_image",
             formParameters = Parameters.build {
                 append("template_id", "123482963")
-                append("username", "figwam")
-                append("password", "lamas123")
+                append("username", System.getenv("u"))
+                append("password", System.getenv("p"))
                 append("text0", "Uff d..da..das habe ich nicht gewusst...")
                 append("text1", "...Uff d..da..das tut mir leid")
             })
