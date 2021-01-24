@@ -91,9 +91,13 @@ class Bot : TelegramLongPollingBot() {
             }
         }
     }
+    val templates = mapOf("lama" to "123482963",
+        "monkey" to "148909805",
+        "disaster" to "97984",
+        "notsimply" to "61579")
 
     fun sendImage(chatId: Long, template: String, text0: String, text1: String) = execute(SendPhoto().apply {
-        val templates = mapOf("lama" to "123482963")
+
         setChatId(chatId)
         setCaption(caption)
         runBlocking {
@@ -137,11 +141,12 @@ class Bot : TelegramLongPollingBot() {
 
             when {
                 text.startsWith("/help") -> send("Chatte einfach ganz normal, ich werd schon etwas sagen, wenn ich etwas zu sagen habe...")
+                text.startsWith("/meme") -> send(templates.entries.joinToString { "," })
                 listOf("cat").any { it in text } -> sendCatImage("", text)
                 text.startsWith("meme") -> {
                     val l = text.split(",")
-                    if (text.split("|").size >= 4) {
-                        sendImage(chatId, l[1], l[2], l[3])
+                    if (text.split("|").size > 1) {
+                        sendImage(chatId, l[1], l.getOrElse(2) { "" }, l.getOrElse(3) { "" })
                     }
                 }
                 react.any { it in text } -> send(quotes.choose())
