@@ -97,7 +97,9 @@ class Bot : TelegramLongPollingBot() {
         "notsimple" to "61579",
     "smart" to "89370399",
     "notsure" to "61520",
-    "joda" to "14371066")
+    "joda" to "14371066",
+    "cheers" to "5496396",
+    "hugall" to "61533")
 
     fun sendImage(chatId: Long, template: String, text0: String, text1: String) = execute(SendPhoto().apply {
 
