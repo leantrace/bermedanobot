@@ -111,7 +111,7 @@ class Bot : TelegramLongPollingBot() {
 
             data class ImageFlipResponseData(val url: String, val page_url: String)
             data class ImageFlipResponse(
-                val success: String,
+                val success: Boolean,
                 val data: ImageFlipResponseData? = null,
                 val error_message: String? = null
             )
@@ -134,15 +134,14 @@ class Bot : TelegramLongPollingBot() {
                             append("text0", "Uff d..da..das habe ich nicht gewusst...")
                             append("text1", "...das tut mir leid")
                         })
+                    if (response.success && response.data != null) {
+                        setPhoto(name, URL(response.data.url).openStream())
+                    }
                     print(response.toString())
-                    /* send(response.success)
-                    send(response.error_message ?: "")
-                    send(response.data?.url ?: "")
-                    send(response.data?.page_url ?: "")*/
                     client.close()
                 }
                 // setPhoto(name, URL("https://i.imgflip.com/22bdq6.jpg").openStream())
-                setPhoto(caption, Thread.currentThread().contextClassLoader.getResourceAsStream(name))
+                // setPhoto(caption, Thread.currentThread().contextClassLoader.getResourceAsStream(name))
             })
 
             fun sendCatImage(mood: String?, caption: String?) = execute(SendPhoto().apply {
