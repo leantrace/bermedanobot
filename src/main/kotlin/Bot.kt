@@ -92,8 +92,8 @@ class Bot : TelegramLongPollingBot() {
         }
     }
 
-    fun sendImage(chatId: Long, name: String, caption: String) = execute(SendPhoto().apply {
-        println("Send Photo: " + name)
+    fun sendImage(chatId: Long, template: String, text0: String, text1: String) = execute(SendPhoto().apply {
+        val templates = mapOf("lama" to "123482963")
         setChatId(chatId)
         setCaption(caption)
         runBlocking {
@@ -101,14 +101,14 @@ class Bot : TelegramLongPollingBot() {
             val response = client.submitForm<ImageFlipResponse>(
                 url = "https://api.imgflip.com/caption_image",
                 formParameters = Parameters.build {
-                    append("template_id", "123482963")
+                    append("template_id", templates.getOrDefault(template, "123482963"))
                     append("username", System.getenv("IMGFLIP_USR"))
                     append("password", System.getenv("IMGFLIP_PWD"))
-                    append("text0", "Uff d..da..das habe ich nicht gewusst...")
-                    append("text1", "...das tut mir leid")
+                    append("text0", text0)
+                    append("text1", text1)
                 })
             if (response.success && response.data != null) {
-                setPhoto(name, URL(response.data.url).openStream())
+                setPhoto("-", URL(response.data.url).openStream())
             }
             print(response.toString())
             client.close()
@@ -138,7 +138,12 @@ class Bot : TelegramLongPollingBot() {
             when {
                 text.startsWith("/help") -> send("Chatte einfach ganz normal, ich werd schon etwas sagen, wenn ich etwas zu sagen habe...")
                 listOf("cat").any { it in text } -> sendCatImage("", text)
-                listOf("meme").any { it in text } -> sendImage(chatId, memes.choose(), "meme")
+                text.startsWith("meme") -> {
+                    val l = text.split(",")
+                    if (text.split("|").size >= 4) {
+                        sendImage(chatId, l[1], l[2], l[3])
+                    }
+                }
                 react.any { it in text } -> send(quotes.choose())
                 members.any { it.key in text } -> {
                     val memberKey = members.keys.find { it in text }
@@ -147,18 +152,12 @@ class Bot : TelegramLongPollingBot() {
                 text == "yes" -> {
                     send("No")
                 }
-                text == "marion" -> {
-                    send("Hello Marion")
-                }
-                text == "memetest" -> {
-                    sendPostRequest(chatId, "", "")
-                }
                 text == "no" -> send("Yes")
                 hated != null -> send("Ich mag nicht ${hated}!")
                 loved != null -> send("Ich liebe ${loved}!")
                 listOf("joke", "witz").any { it in text } -> jokes.choose().let {
                     if (it.image == null) send(it.text)
-                    else sendImage(chatId, it.image, it.text)
+                    else sendImage(chatId, "lama", it.image, it.text)
                 }
                 rnd.nextDouble() < .1 -> send(quotes.choose())
             }
