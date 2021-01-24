@@ -2,6 +2,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.features.json.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.coroutines.*
 import org.telegram.telegrambots.ApiContextInitializer
@@ -16,6 +17,7 @@ import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import java.net.http.HttpResponse
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
@@ -113,12 +115,15 @@ class Bot : TelegramLongPollingBot() {
                 runBlocking {
                     val client = HttpClient(Apache) { install(JsonFeature) }
                     send("send request to https://api.imgflip.com/caption_image/")
-                    val response = client.post<ImageFlipResponse> {
-                        url("https://api.imgflip.com/caption_image/")
-                        contentType(ContentType.Application.Json)
-                        body = ImageFlip("123482963", System.getenv("IMGFLIP_USR"), System.getenv("IMGFLIP_PWD"),
-                            "Uff d..da..das habe ich nicht gewusst...", "...Uff d..da..das tut mir leid")
-                    }
+                    val response = client.submitForm<ImageFlipResponse>(
+                        url = "https://foo.com/login",
+                        formParameters = Parameters.build {
+                            append("template_id", "123482963")
+                            append("username", System.getenv("IMGFLIP_USR"))
+                            append("password", System.getenv("IMGFLIP_PWD"))
+                            append("text0", "Uff d..da..das habe ich nicht gewusst...")
+                            append("text1", "...Uff d..da..das tut mir leid")
+                        })
                     send(response.success)
                     send(response.error_message?:"")
                     send(response.data?.url?:"")
