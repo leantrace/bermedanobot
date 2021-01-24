@@ -3,10 +3,7 @@ import io.ktor.client.engine.apache.*
 import io.ktor.client.features.json.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.telegram.telegrambots.ApiContextInitializer
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
@@ -29,11 +26,7 @@ fun main() {
     }
 }
 
-class Bot : TelegramLongPollingBot(), CoroutineScope {
-
-    private var job: Job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
+class Bot : TelegramLongPollingBot() {
 
     private val rnd = Random
     private val react = listOf("kite", "surf", "wind").map { Regex(it) }
@@ -112,15 +105,13 @@ class Bot : TelegramLongPollingBot(), CoroutineScope {
                                  val max_font_size: String? = null, val boxes: List<Box>? = null)
             data class ImageFlipResponseData(val url: String, val page_url: String)
             data class ImageFlipResponse(val success: String, val data: ImageFlipResponseData? = null, val error_message: String? = null)
-            val client = HttpClient(Apache) {
-                install(JsonFeature)
-            }
 
             fun sendImage(name: String, caption: String) = execute(SendPhoto().apply {
                 println("Send Photo: "+name)
                 setChatId(chatId)
                 setCaption(caption)
-                launch {
+                runBlocking {
+                    val client = HttpClient(Apache) { install(JsonFeature) }
                     send("send request to https://api.imgflip.com/caption_image/")
                     val response = client.post<ImageFlipResponse> {
                         url("https://api.imgflip.com/caption_image/")
@@ -132,6 +123,7 @@ class Bot : TelegramLongPollingBot(), CoroutineScope {
                     send(response.error_message?:"")
                     send(response.data?.url?:"")
                     send(response.data?.page_url?:"")
+                    client.close()
                 }
                 // setPhoto(name, URL("https://i.imgflip.com/22bdq6.jpg").openStream())
                 setPhoto(caption, Thread.currentThread().contextClassLoader.getResourceAsStream(name))
