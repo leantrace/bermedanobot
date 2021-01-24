@@ -91,23 +91,26 @@ class Bot : TelegramLongPollingBot() {
             }
         }
     }
-    val templates = mapOf("lama" to "123482963",
+    val templates = mapOf(
+        "lama" to "123482963",
+        "batman" to "438680",
         "monkey" to "148909805",
         "disaster" to "97984",
         "notsimple" to "61579",
-    "smart" to "89370399",
-    "notsure" to "61520",
-    "joda" to "14371066",
-    "cheers" to "5496396",
-    "hugall" to "61533",
-    "sad" to "61539",
-    "money" to "176908",
-    "koala" to "27920",
-    "suit" to "922147",
-    "whatif" to "61516",
-    "sparta" to "195389",
-    "magic" to "32399536",
-    "ned" to "18552174")
+        "smart" to "89370399",
+        "notsure" to "61520",
+        "joda" to "14371066",
+        "cheers" to "5496396",
+        "hugall" to "61533",
+        "sad" to "61539",
+        "money" to "176908",
+        "koala" to "27920",
+        "suit" to "922147",
+        "whatif" to "61516",
+        "sparta" to "195389",
+        "magic" to "32399536",
+        "ned" to "18552174"
+    )
 
     fun sendImage(chatId: Long, template: String, text0: String, text1: String) = execute(SendPhoto().apply {
 
@@ -157,8 +160,8 @@ class Bot : TelegramLongPollingBot() {
                 text.startsWith("/meme") -> send(Bot().templates.keys.toString())
                 listOf("cat").any { it in text } -> sendCatImage("", text)
                 text.startsWith("meme") -> {
-                    val l = text.split("|")
-                    if (text.split("|").size > 1) {
+                    val l = text.split("/")
+                    if (text.split("/").size > 1) {
                         sendImage(chatId, l[1], l.getOrElse(2) { "" }, l.getOrElse(3) { "" })
                     }
                 }
