@@ -1,3 +1,12 @@
+import io.ktor.client.*
+import io.ktor.client.engine.apache.*
+import io.ktor.client.features.json.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.telegram.telegrambots.ApiContextInitializer
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
@@ -10,6 +19,7 @@ import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
 fun main() {
@@ -19,7 +29,12 @@ fun main() {
     }
 }
 
-class Bot : TelegramLongPollingBot() {
+class Bot : TelegramLongPollingBot(), CoroutineScope {
+
+    private var job: Job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
     private val rnd = Random
     private val react = listOf("kite", "surf", "wind").map { Regex(it) }
     private val members = mapOf (
@@ -35,6 +50,12 @@ class Bot : TelegramLongPollingBot() {
         }
         if (System.getenv("BOT_TOKEN") == null) {
             throw RuntimeException("Set BOT_TOKEN environment variable. If you need to generate it, contact: https://telegram.me/botfather")
+        }
+        if (System.getenv("IMGFLIP_PWD") == null) {
+            throw RuntimeException("Set IMAGEFLIP_PWD environment variable.")
+        }
+        if (System.getenv("IMGFLIP_USR") == null) {
+            throw RuntimeException("Set IMAGEFLIP_USR environment variable.")
         }
     }
 
@@ -83,12 +104,37 @@ class Bot : TelegramLongPollingBot() {
 
             fun send(text: String) = execute(SendMessage(chatId, text))
 
+            // https://imgflip.com/api
+            data class Box(val text: String, val x: Int, val y: Int, val width: Int, val height: Int,
+                           val color: String, val outline_color: String)
+            data class ImageFlip(val template_id: String, val username: String, val password: String,
+                                 val text0: String, val text1: String, val font: String? = null,
+                                 val max_font_size: String? = null, val boxes: List<Box>? = null)
+            data class ImageFlipResponseData(val url: String, val page_url: String)
+            data class ImageFlipResponse(val success: String, val data: ImageFlipResponseData? = null, val error_message: String? = null)
+            val client = HttpClient(Apache) {
+                install(JsonFeature)
+            }
+
             fun sendImage(name: String, caption: String) = execute(SendPhoto().apply {
                 println("Send Photo: "+name)
                 setChatId(chatId)
                 setCaption(caption)
-                setPhoto(caption, Thread.currentThread().contextClassLoader.getResourceAsStream(name))
+                launch {
+                    send("send request to https://api.imgflip.com/caption_image/")
+                    val response = client.post<ImageFlipResponse> {
+                        url("https://api.imgflip.com/caption_image/")
+                        contentType(ContentType.Application.Json)
+                        body = ImageFlip("123482963", System.getenv("IMAGEFLIP_USR"), System.getenv("IMAGEFLIP_PWD"),
+                            "Uff d..da..das habe ich nicht gewusst...", "...Uff d..da..das tut mir leid")
+                    }
+                    send(response.success)
+                    send(response.error_message?:"")
+                    send(response.data?.url?:"")
+                    send(response.data?.page_url?:"")
+                }
                 // setPhoto(name, URL("https://i.imgflip.com/22bdq6.jpg").openStream())
+                setPhoto(caption, Thread.currentThread().contextClassLoader.getResourceAsStream(name))
             })
 
             fun sendCatImage(mood: String?, caption: String?) = execute(SendPhoto().apply {
