@@ -25,6 +25,12 @@ fun main() {
     }
 }
 
+// https://imgflip.com/api
+data class Box(val text: String, val x: Int, val y: Int, val width: Int, val height: Int, val color: String, val outline_color: String)
+data class ImageFlip(val template_id: String, val username: String, val password: String, val text0: String, val text1: String, val font: String? = null, val max_font_size: String? = null, val boxes: List<Box>? = null)
+data class ImageFlipResponseData(val url: String, val page_url: String)
+data class ImageFlipResponse(val success: Boolean, val data: ImageFlipResponseData? = null, val error_message: String? = null)
+
 class Bot : TelegramLongPollingBot() {
 
     private val rnd = Random
@@ -86,6 +92,31 @@ class Bot : TelegramLongPollingBot() {
         }
     }
 
+    fun sendImage(chatId: Long, name: String, caption: String) = execute(SendPhoto().apply {
+        println("Send Photo: " + name)
+        setChatId(chatId)
+        setCaption(caption)
+        runBlocking {
+            val client = HttpClient(Apache) { install(JsonFeature) }
+            val response = client.submitForm<ImageFlipResponse>(
+                url = "https://api.imgflip.com/caption_image",
+                formParameters = Parameters.build {
+                    append("template_id", "123482963")
+                    append("username", System.getenv("IMGFLIP_USR"))
+                    append("password", System.getenv("IMGFLIP_PWD"))
+                    append("text0", "Uff d..da..das habe ich nicht gewusst...")
+                    append("text1", "...das tut mir leid")
+                })
+            if (response.success && response.data != null) {
+                setPhoto(name, URL(response.data.url).openStream())
+            }
+            print(response.toString())
+            client.close()
+        }
+        // setPhoto(name, URL("https://i.imgflip.com/22bdq6.jpg").openStream())
+        // setPhoto(caption, Thread.currentThread().contextClassLoader.getResourceAsStream(name))
+    })
+
     override fun onUpdateReceived(update: Update) {
         if (update.message?.text != null) {
             val text = update.message.text.toLowerCase()
@@ -95,50 +126,6 @@ class Bot : TelegramLongPollingBot() {
             val chatId = update.message.chatId
 
             fun send(text: String) = execute(SendMessage(chatId, text))
-
-            // https://imgflip.com/api
-            data class Box(
-                val text: String, val x: Int, val y: Int, val width: Int, val height: Int,
-                val color: String, val outline_color: String
-            )
-
-            data class ImageFlip(
-                val template_id: String, val username: String, val password: String,
-                val text0: String, val text1: String, val font: String? = null,
-                val max_font_size: String? = null, val boxes: List<Box>? = null
-            )
-
-            data class ImageFlipResponseData(val url: String, val page_url: String)
-            data class ImageFlipResponse(
-                val success: Boolean,
-                val data: ImageFlipResponseData? = null,
-                val error_message: String? = null
-            )
-
-            fun sendImage(name: String, caption: String) = execute(SendPhoto().apply {
-                println("Send Photo: " + name)
-                setChatId(chatId)
-                setCaption(caption)
-                runBlocking {
-                    val client = HttpClient(Apache) { install(JsonFeature) }
-                    val response = client.submitForm<ImageFlipResponse>(
-                        url = "https://api.imgflip.com/caption_image",
-                        formParameters = Parameters.build {
-                            append("template_id", "123482963")
-                            append("username", System.getenv("IMGFLIP_USR"))
-                            append("password", System.getenv("IMGFLIP_PWD"))
-                            append("text0", "Uff d..da..das habe ich nicht gewusst...")
-                            append("text1", "...das tut mir leid")
-                        })
-                    if (response.success && response.data != null) {
-                        setPhoto(name, URL(response.data.url).openStream())
-                    }
-                    print(response.toString())
-                    client.close()
-                }
-                // setPhoto(name, URL("https://i.imgflip.com/22bdq6.jpg").openStream())
-                // setPhoto(caption, Thread.currentThread().contextClassLoader.getResourceAsStream(name))
-            })
 
             fun sendCatImage(mood: String?, caption: String?) = execute(SendPhoto().apply {
                 setChatId(chatId)
@@ -151,7 +138,7 @@ class Bot : TelegramLongPollingBot() {
             when {
                 text.startsWith("/help") -> send("Chatte einfach ganz normal, ich werd schon etwas sagen, wenn ich etwas zu sagen habe...")
                 listOf("cat").any { it in text } -> sendCatImage("", text)
-                listOf("meme").any { it in text } -> sendImage(memes.choose(), "meme")
+                listOf("meme").any { it in text } -> sendImage(chatId, memes.choose(), "meme")
                 react.any { it in text } -> send(quotes.choose())
                 members.any { it.key in text } -> {
                     val memberKey = members.keys.find { it in text }
@@ -171,7 +158,7 @@ class Bot : TelegramLongPollingBot() {
                 loved != null -> send("Ich liebe ${loved}!")
                 listOf("joke", "witz").any { it in text } -> jokes.choose().let {
                     if (it.image == null) send(it.text)
-                    else sendImage(it.image, it.text)
+                    else sendImage(chatId, it.image, it.text)
                 }
                 rnd.nextDouble() < .1 -> send(quotes.choose())
             }
