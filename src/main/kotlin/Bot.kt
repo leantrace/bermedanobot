@@ -135,11 +135,34 @@ class Bot : TelegramLongPollingBot() {
                     append("template_id", templates.getOrDefault(template, "123482963"))
                     append("username", System.getenv("IMGFLIP_USR"))
                     append("password", System.getenv("IMGFLIP_PWD"))
-                    append("text0", text0)
-                    append("text1", text1)
-                    append("text2", text2)
-                    append("text3", text3)
-                    append("text4", text4)
+                    if (!template.equals("meeting")) {
+                        append("text0", text0)
+                        append("text1", text1)
+                    } else {
+                        append("boxes[0][text]", text0)
+                        append("boxes[0][x]", "300")
+                        append("boxes[0][y]", "50")
+                        append("boxes[0][color]", "#ffffff")
+                        append("boxes[0][outline_color]", "#000000")
+
+                        append("boxes[0][text]", text1)
+                        append("boxes[0][x]", "75")
+                        append("boxes[0][y]", "260")
+                        append("boxes[0][color]", "#ffffff")
+                        append("boxes[0][outline_color]", "#000000")
+
+                        append("boxes[0][text]", text2)
+                        append("boxes[0][x]", "200")
+                        append("boxes[0][y]", "270")
+                        append("boxes[0][color]", "#ffffff")
+                        append("boxes[0][outline_color]", "#000000")
+
+                        append("boxes[0][text]", text3)
+                        append("boxes[0][x]", "360")
+                        append("boxes[0][y]", "280")
+                        append("boxes[0][color]", "#ffffff")
+                        append("boxes[0][outline_color]", "#000000")
+                    }
                 })
             if (response.success && response.data != null) {
                 setPhoto("-", URL(response.data.url).openStream())
