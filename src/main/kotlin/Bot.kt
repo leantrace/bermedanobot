@@ -117,9 +117,10 @@ class Bot : TelegramLongPollingBot() {
         "grumpy" to "405658",
         "suggest" to "61581",
         "drevil" to "40945639",
-        "crabs" to "182088735",
         "math" to "80996545",
-        "lonely" to "67452763"
+        "lonely" to "67452763",
+        "luke" to "19194965",
+        "pulp" to "124212"
     )
 
     fun sendImage(chatId: Long, template: String, text0: String, text1: String) = execute(SendPhoto().apply {
