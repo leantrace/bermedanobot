@@ -135,8 +135,8 @@ class Bot : TelegramLongPollingBot() {
                     append("username", System.getenv("IMGFLIP_USR"))
                     append("password", System.getenv("IMGFLIP_PWD"))
                     if (texts.size <= 2) {
-                        append("text0", texts.getOrElse(0){"-"})
-                        append("text1", texts.getOrElse(1){"-"})
+                        append("text0", texts.getOrElse(0){""})
+                        append("text1", texts.getOrElse(1){""})
                     } else {
                         texts.forEachIndexed { idx, text ->
                             append("boxes[$idx][text]", text)
