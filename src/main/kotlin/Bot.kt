@@ -124,7 +124,6 @@ class Bot : TelegramLongPollingBot() {
     )
 
     fun sendImage(chatId: Long, template: String, texts: List<String> = emptyList()) = execute(SendPhoto().apply {
-
         setChatId(chatId)
         setCaption(caption)
         runBlocking {
@@ -181,7 +180,7 @@ class Bot : TelegramLongPollingBot() {
                 text.startsWith("meme") -> {
                     val l = text.split("/")
                     if (text.split("/").size > 1) {
-                        sendImage(chatId, l[1], l.subList(1, l.size))
+                        sendImage(chatId, l[1], l.subList(2, l.size))
                     }
                 }
                 react.any { it in text } -> send(quotes.choose())
