@@ -123,7 +123,7 @@ class Bot : TelegramLongPollingBot() {
         "pulp" to "124212"
     )
 
-    fun sendImage(chatId: Long, template: String, text0: String, text1: String) = execute(SendPhoto().apply {
+    fun sendImage(chatId: Long, template: String, text0: String, text1: String, text2: String, text3: String, text4: String) = execute(SendPhoto().apply {
 
         setChatId(chatId)
         setCaption(caption)
@@ -137,6 +137,9 @@ class Bot : TelegramLongPollingBot() {
                     append("password", System.getenv("IMGFLIP_PWD"))
                     append("text0", text0)
                     append("text1", text1)
+                    append("text2", text2)
+                    append("text3", text3)
+                    append("text4", text4)
                 })
             if (response.success && response.data != null) {
                 setPhoto("-", URL(response.data.url).openStream())
@@ -173,7 +176,7 @@ class Bot : TelegramLongPollingBot() {
                 text.startsWith("meme") -> {
                     val l = text.split("/")
                     if (text.split("/").size > 1) {
-                        sendImage(chatId, l[1], l.getOrElse(2) { "" }, l.getOrElse(3) { "" })
+                        sendImage(chatId, l[1], l.getOrElse(2) { "" }, l.getOrElse(3) { "" }, l.getOrElse(4) { "" }, l.getOrElse(5) { "" }, l.getOrElse(6) { "" })
                     }
                 }
                 react.any { it in text } -> send(quotes.choose())
@@ -189,7 +192,7 @@ class Bot : TelegramLongPollingBot() {
                 loved != null -> send("Ich liebe ${loved}!")
                 listOf("joke", "witz").any { it in text } -> jokes.choose().let {
                     if (it.image == null) send(it.text)
-                    else sendImage(chatId, "lama", it.image, it.text)
+                    else sendImage(chatId, "lama", it.image, it.text, "","","")
                 }
                 rnd.nextDouble() < .1 -> send(quotes.choose())
             }
