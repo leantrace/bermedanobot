@@ -34,7 +34,7 @@ data class ImageFlipResponse(val success: Boolean, val data: ImageFlipResponseDa
 class Bot : TelegramLongPollingBot() {
 
     private val rnd = Random
-    private val react = listOf("kite", "surf", "wind").map { Regex(it) }
+    private val react = listOf("kite", "surf", "wind")
     private val members = mapOf(
         "alex" to listOf("Meinst du Alex den Kite-Wolverine?!", "JESUS IS COMING 0xF00x9F0x9A0x80"),
         "stibu" to listOf("Yo dr Stibu chas drum o!", "Stibu? Dä wo immer mitem Kite umefailed?"),
