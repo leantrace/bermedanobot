@@ -10,16 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-  - name: Print Github Variables
 
-      run: |
-        echo "GITHUB_WORKFLOW:$GITHUB_WORKFLOW"
-        echo "GITHUB_EVENT_NAME:$GITHUB_EVENT_NAME"
-        echo "GITHUB_EVENT_PATH:$GITHUB_EVENT_PATH"
-        echo "GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
-        echo "GITHUB_SHA:$GITHUB_SHA"
-        echo "GITHUB_REF:$GITHUB_REF"
-        echo "GITHUB_HEAD_REF:$GITHUB_HEAD_REF"
+      - name: Print Github Variables
+        run: |
+          echo "GITHUB_WORKFLOW:$GITHUB_WORKFLOW"
+          echo "GITHUB_EVENT_NAME:$GITHUB_EVENT_NAME"
+          echo "GITHUB_EVENT_PATH:$GITHUB_EVENT_PATH"
+          echo "GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
+          echo "GITHUB_SHA:$GITHUB_SHA"
+          echo "GITHUB_REF:$GITHUB_REF"
+          echo "GITHUB_HEAD_REF:$GITHUB_HEAD_REF"
 
       - name: Print complete webhook event payload
         run: cat $GITHUB_EVENT_PAT
