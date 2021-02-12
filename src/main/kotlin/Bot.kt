@@ -153,7 +153,10 @@ class Bot : TelegramLongPollingBot() {
                     header("api-key", System.getenv("DEEPAI_API_KEY"))
                 }
             if (response.err == null && response.output != null) {
-                setText(response.output)
+                if (response.output.length > 400) // max 400 allowed
+                    setText("${response.output.substring(0,390)}...")
+                else
+                    setText(response.output)
             }
             print(response.toString())
             client.close()
