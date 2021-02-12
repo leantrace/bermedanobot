@@ -129,11 +129,14 @@ class Bot : TelegramLongPollingBot() {
 
     fun sendBullshit(chatId: Long, text: String) = execute(SendMessage().apply {
         setChatId(chatId)
+        val fiveMinutes = 5*60*1000L
         runBlocking {
             val client = HttpClient(Apache) {
                 install(JsonFeature)
                 install(HttpTimeout) {
-                    requestTimeoutMillis = 5*60*1000 // 5 minutes
+                    requestTimeoutMillis = fiveMinutes // 5 minutes
+                    socketTimeoutMillis = fiveMinutes
+                    connectTimeoutMillis = fiveMinutes
                 }}
             val response = client.submitForm<DeepaiResponse>(
                 url = "https://api.deepai.org/api/text-generator",
