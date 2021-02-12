@@ -146,7 +146,7 @@ class Bot : TelegramLongPollingBot() {
                     header("api-key", System.getenv("DEEPAI_API_KEY"))
                 }
             if (response.err == null && response.output != null) {
-                setText(response.output)
+                setText("response.output")
             }
             print(response.toString())
             client.close()
