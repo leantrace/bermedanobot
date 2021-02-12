@@ -11,6 +11,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -127,7 +128,7 @@ class Bot : TelegramLongPollingBot() {
         "drake" to "91998305"
     )
 
-    fun sendBullshit(chatId: Long, text: String) = execute(SendMessage().apply {
+    private fun sendBullshit(chatId: Long, text: String): Message = execute(SendMessage().apply {
         setChatId(chatId)
         val fiveMinutes = 5*60*1000L
         runBlocking {
@@ -146,7 +147,7 @@ class Bot : TelegramLongPollingBot() {
                     header("api-key", System.getenv("DEEPAI_API_KEY"))
                 }
             if (response.err == null && response.output != null) {
-                setText("response.output")
+                setText(response.output)
             }
             print(response.toString())
             client.close()
