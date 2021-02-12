@@ -20,6 +20,12 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
 import kotlin.random.Random
+import org.glassfish.grizzly.Grizzly.logger
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod
+
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException
+import java.io.Serializable
+
 
 fun main() {
     ApiContextInitializer.init()
@@ -226,7 +232,11 @@ class Bot : TelegramLongPollingBot() {
                 text.startsWith("bs") || text.startsWith("bullshit") -> {
                     val l = text.split("/")
                     if (text.split("/").size > 1) {
-                        sendBullshit(chatId, l[1])
+                        try {
+                            sendBullshit(chatId, l[1])
+                        } catch (e: TelegramApiRequestException) {
+                            println(e.apiResponse + ": " + e.errorCode)
+                        }
                     }
                 }
                 hated != null -> send("Ich mag nicht ${hated}!")
