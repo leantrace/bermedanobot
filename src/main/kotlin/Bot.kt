@@ -1,5 +1,6 @@
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
+import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
@@ -129,7 +130,11 @@ class Bot : TelegramLongPollingBot() {
     fun sendBullshit(chatId: Long, text: String) = execute(SendMessage().apply {
         setChatId(chatId)
         runBlocking {
-            val client = HttpClient(Apache) { install(JsonFeature) }
+            val client = HttpClient(Apache) {
+                install(JsonFeature)
+                install(HttpTimeout) {
+                    requestTimeoutMillis = 5*60*1000 // 5 minutes
+                }}
             val response = client.submitForm<DeepaiResponse>(
                 url = "https://api.deepai.org/api/text-generator",
                 formParameters = Parameters.build {
