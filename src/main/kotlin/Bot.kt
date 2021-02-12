@@ -1,6 +1,7 @@
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.features.json.*
+import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
@@ -30,6 +31,7 @@ data class Box(val text: String, val x: Int, val y: Int, val width: Int, val hei
 data class ImageFlip(val template_id: String, val username: String, val password: String, val text0: String, val text1: String, val font: String? = null, val max_font_size: String? = null, val boxes: List<Box>? = null)
 data class ImageFlipResponseData(val url: String, val page_url: String)
 data class ImageFlipResponse(val success: Boolean, val data: ImageFlipResponseData? = null, val error_message: String? = null)
+data class DeepaiResponse(val status: String?, val err: String?, val id: String?, val output: String?)
 
 class Bot : TelegramLongPollingBot() {
 
@@ -120,8 +122,28 @@ class Bot : TelegramLongPollingBot() {
         "math" to "80996545",
         "lonely" to "67452763",
         "luke" to "19194965",
-        "pulp" to "124212"
+        "pulp" to "124212",
+        "drake" to "91998305"
     )
+
+    fun sendBullshit(chatId: Long, text: String) = execute(SendMessage().apply {
+        setChatId(chatId)
+        runBlocking {
+            val client = HttpClient(Apache) { install(JsonFeature) }
+            val response = client.submitForm<DeepaiResponse>(
+                url = "https://api.deepai.org/api/text-generator",
+                formParameters = Parameters.build {
+                    append("text", text)
+                }){
+                    header("api-key", System.getenv("DEEPAI_API_KEY"))
+                }
+            if (response.err == null && response.output != null) {
+                setText(response.output)
+            }
+            print(response.toString())
+            client.close()
+        }
+    })
 
     fun sendImage(chatId: Long, template: String, texts: List<String> = emptyList()) = execute(SendPhoto().apply {
         setChatId(chatId)
@@ -192,6 +214,12 @@ class Bot : TelegramLongPollingBot() {
                     send("No")
                 }
                 text == "no" -> send("Yes")
+                text.startsWith("bs") || text.startsWith("bullshit") -> {
+                    val l = text.split("/")
+                    if (text.split("/").size > 1) {
+                        sendBullshit(chatId, l[1])
+                    }
+                }
                 hated != null -> send("Ich mag nicht ${hated}!")
                 loved != null -> send("Ich liebe ${loved}!")
                 listOf("joke", "witz").any { it in text } -> jokes.choose().let {
