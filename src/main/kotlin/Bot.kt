@@ -48,7 +48,9 @@ class Bot : TelegramLongPollingBot() {
     private val members = mapOf(
         "alex" to listOf("Meinst du Alex den Kite-Wolverine?!", "JESUS IS COMING 0xF00x9F0x9A0x80"),
         "stibu" to listOf("Yo dr Stibu chas drum o!", "Stibu? Dä wo immer mitem Kite umefailed?"),
-        "isa" to listOf("Die Isa? o.O Die Upwind-Isa?!?", "Die Isa? Hei Sie trinkt imfau ou mate!")
+        "isa" to listOf("Die Isa? o.O Die Upwind-Isa?!?", "Die Isa? Hei Sie trinkt imfau ou mate!"),
+        "eli" to listOf("Hey Eli schreibt mal mit Doppel-ll! ;)"),
+        "elli" to listOf("Übrigens Elli hat Koreander mega gern!")
     )
 
     init {
@@ -248,7 +250,7 @@ class Bot : TelegramLongPollingBot() {
                     if (it.image == null) send(it.text)
                     else sendImage(chatId, "lama")
                 }
-                rnd.nextDouble() < .1 -> send(quotes.choose())
+                //rnd.nextDouble() < .1 -> send(quotes.choose())
             }
         }
     }
