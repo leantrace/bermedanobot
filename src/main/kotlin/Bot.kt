@@ -151,7 +151,7 @@ class Bot : TelegramLongPollingBot() {
                     socketTimeoutMillis = fiveMinutes
                     connectTimeoutMillis = fiveMinutes
                 }}
-            val q = QAOpenAIRequest(prompt = "Q: $prompt? \n")
+            val q = QAOpenAIRequest(prompt = "Q: $prompt? \\n")
             println("Ask: $q")
             val response = client.post<QAOpenAIResponse>("https://api.openai.com/v1/engines/davinci/completions"){
                 body = q
