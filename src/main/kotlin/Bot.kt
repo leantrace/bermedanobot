@@ -41,7 +41,7 @@ data class ImageFlip(val template_id: String, val username: String, val password
 data class ImageFlipResponseData(val url: String, val page_url: String)
 data class ImageFlipResponse(val success: Boolean, val data: ImageFlipResponseData? = null, val error_message: String? = null)
 data class DeepaiResponse(val status: String?, val err: String?, val id: String?, val output: String?)
-data class QAOpenAIRequest(val prompt: String, val temperature: Int = 0, val max_tokens: Int = 100, val top_p: Int = 1, val frequency_penalty: Double = 0.0, val presence_penalty: Double = 0.0, val stop: List<String> = listOf("\n"))
+data class QAOpenAIRequest(val prompt: String, val temperature: Int = 0, val max_tokens: Int = 100, val top_p: Int = 1, val frequency_penalty: Double = 0.0, val presence_penalty: Double = 0.0, val stop: List<String> = listOf("\\n"))
 data class QAOpenAIResponse(val id: String?, val `object`: String?, val created: Long?, val model: String?, val choices: List<QAOpenAIChoicesResponse>)
 data class QAOpenAIChoicesResponse(val text: String?, val index: String?, val logprobs: String?, val finish_reason: String?)
 
