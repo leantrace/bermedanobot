@@ -266,11 +266,21 @@ class Bot : TelegramLongPollingBot() {
                 }
                 text.toLowerCase() == "yes" -> send("No")
                 text.toLowerCase() == "no" -> send("Yes")
-                text.startsWith("bs") || text.startsWith("bullshit") -> {
+                text.startsWith("bs/") || text.startsWith("bullshit/") -> {
                     val l = text.split("/")
                     if (text.split("/").size > 1) {
                         try {
                             sendBullshit(chatId, l[1])
+                        } catch (e: TelegramApiRequestException) {
+                            println(e.apiResponse + ": " + e.errorCode)
+                        }
+                    }
+                }
+                text.startsWith("q/") || text.startsWith("question/") || text.startsWith("frage/") -> {
+                    val l = text.split("/")
+                    if (text.split("/").size > 1) {
+                        try {
+                            qaOpenai(chatId, l[1])
                         } catch (e: TelegramApiRequestException) {
                             println(e.apiResponse + ": " + e.errorCode)
                         }
