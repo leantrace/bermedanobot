@@ -158,16 +158,16 @@ class Bot : TelegramLongPollingBot() {
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer ${System.getenv("OPENAI_API_KEY")}")
             }
-            text = if (response.choices.isNotEmpty() && response.choices[0].text?.isNotBlank() == true) {
+            val t = if (response.choices.isNotEmpty() && response.choices[0].text?.isNotBlank() == true) {
                 if (response.choices.size > 1) {
                     response.choices.mapIndexed { i, v -> "$i: ${v.text}"}.joinToString { "\n" }
                 } else {
-                    response.choices[0].text
+                    response.choices[0].text?:"could not find any answer"
                 }
-                //setText(response.choices.joinToString {  })
             } else {
                 "could not find any answer"
             }
+            text = t.split("\n")[0]
             println(response)
             client.close()
         }
