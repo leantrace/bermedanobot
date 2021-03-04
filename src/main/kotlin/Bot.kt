@@ -154,7 +154,7 @@ class Bot : TelegramLongPollingBot() {
             val response = client.post<QAOpenAIResponse>("https://api.openai.com/v1/engines/davinci/completions"){
                 body = QAOpenAIRequest(prompt = prompt)
                 contentType(ContentType.Application.Json)
-                header("api-key", System.getenv("DEEPAI_API_KEY"))
+                header("api-key", System.getenv("OPENAI_API_KEY"))
             }
             if (response.choices.isNotEmpty()) {
                 if (response.choices.size > 1) {
