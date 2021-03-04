@@ -157,7 +157,7 @@ class Bot : TelegramLongPollingBot() {
                 header("Authorization", "Bearer ${System.getenv("OPENAI_API_KEY")}")
             }
             if (response.choices.isNotEmpty()) {
-                if (response.choices.size > 1) {
+                if (response.choices.size > 1 && response.choices[0].text?.isNotBlank() == true) {
                     text = response.choices.mapIndexed { i, v -> "$i: ${v.text}"}.joinToString { "\n" }
                 } else {
                     text = response.choices[0].text
