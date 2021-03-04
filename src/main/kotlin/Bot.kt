@@ -255,19 +255,13 @@ class Bot : TelegramLongPollingBot() {
                 text.startsWith("/help") -> send("Chatte einfach ganz normal, ich werd schon etwas sagen, wenn ich etwas zu sagen habe...")
                 text.startsWith("/meme") -> send(Bot().templates.keys.toString())
                 listOf("cat").any { it in text } -> sendCatImage("", text)
-                text.startsWith("meme") -> {
+                text.startsWith("meme/") -> {
                     val l = text.split("/")
                     if (text.split("/").size > 1) {
                         sendImage(chatId, l[1], l.subList(2, l.size))
                     }
                 }
-                react.any { it in text } -> send(quotes.choose())
-                members.any { it.key in text } -> {
-                    val memberKey = members.keys.find { it in text }
-                    members[memberKey]?.let { send(it.random()) }
-                }
-                text.toLowerCase() == "yes" -> send("No")
-                text.toLowerCase() == "no" -> send("Yes")
+
                 text.startsWith("bs/") || text.startsWith("bullshit/") -> {
                     val l = text.split("/")
                     if (text.split("/").size > 1) {
@@ -288,6 +282,13 @@ class Bot : TelegramLongPollingBot() {
                         }
                     }
                 }
+                react.any { it in text } -> send(quotes.choose())
+                members.any { it.key in text } -> {
+                    val memberKey = members.keys.find { it in text }
+                    members[memberKey]?.let { send(it.random()) }
+                }
+                text.toLowerCase() == "yes" -> send("No")
+                text.toLowerCase() == "no" -> send("Yes")
                 hated != null -> send("Ich mag nicht ${hated}!")
                 loved != null -> send("Ich liebe ${loved}!")
                 listOf("joke", "witz").any { it in text } -> jokes.choose().let {
