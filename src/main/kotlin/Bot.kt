@@ -25,6 +25,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod
 
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException
 import java.io.Serializable
+import java.math.BigDecimal
 
 
 fun main() {
@@ -40,6 +41,9 @@ data class ImageFlip(val template_id: String, val username: String, val password
 data class ImageFlipResponseData(val url: String, val page_url: String)
 data class ImageFlipResponse(val success: Boolean, val data: ImageFlipResponseData? = null, val error_message: String? = null)
 data class DeepaiResponse(val status: String?, val err: String?, val id: String?, val output: String?)
+data class QAOpenAIRequest(val prompt: String, val temperature: Int = 0, val max_tokens: Int = 100, val top_p: Int = 1, val frequency_penalty: Double = 0.0, val presence_penalty: Double = 0.0, val stop: List<String> = listOf("\n"))
+data class QAOpenAIResponse(val id: String?, val `object`: String?, val created: Long?, val model: String?, val choices: List<QAOpenAIChoicesResponse>)
+data class QAOpenAIChoicesResponse(val text: String?, val index: String?, val logprobs: String?, val finish_reason: String?)
 
 class Bot : TelegramLongPollingBot() {
 
@@ -136,6 +140,37 @@ class Bot : TelegramLongPollingBot() {
         "drake" to "91998305"
     )
 
+    private fun qaOpenai(chatId: Long, prompt: String): Message = execute(SendMessage().apply {
+        setChatId(chatId)
+        val fiveMinutes = 5*60*1000L
+        runBlocking {
+            val client = HttpClient(Apache) {
+                install(JsonFeature)
+                install(HttpTimeout) {
+                    requestTimeoutMillis = fiveMinutes // 5 minutes
+                    socketTimeoutMillis = fiveMinutes
+                    connectTimeoutMillis = fiveMinutes
+                }}
+            val response = client.post<QAOpenAIResponse>("https://api.openai.com/v1/engines/davinci/completions"){
+                body = QAOpenAIRequest(prompt = prompt)
+                contentType(ContentType.Application.Json)
+                header("api-key", System.getenv("DEEPAI_API_KEY"))
+            }
+            if (response.choices.isNotEmpty()) {
+                if (response.choices.size > 1) {
+                    text = response.choices.mapIndexed { i, v -> "$i: ${v.text}"}.joinToString { "\n" }
+                } else {
+                    text = response.choices[0].text
+                }
+                //setText(response.choices.joinToString {  })
+            } else {
+                text = "could not find any answer"
+            }
+            println(response)
+            client.close()
+        }
+    })
+
     private fun sendBullshit(chatId: Long, text: String): Message = execute(SendMessage().apply {
         setChatId(chatId)
         val fiveMinutes = 5*60*1000L
@@ -160,7 +195,6 @@ class Bot : TelegramLongPollingBot() {
                 else
                     setText(response.output)
             }
-            print(response.toString())
             client.close()
         }
     })
@@ -230,10 +264,8 @@ class Bot : TelegramLongPollingBot() {
                     val memberKey = members.keys.find { it in text }
                     members[memberKey]?.let { send(it.random()) }
                 }
-                text == "yes" -> {
-                    send("No")
-                }
-                text == "no" -> send("Yes")
+                text.toLowerCase() == "yes" -> send("No")
+                text.toLowerCase() == "no" -> send("Yes")
                 text.startsWith("bs") || text.startsWith("bullshit") -> {
                     val l = text.split("/")
                     if (text.split("/").size > 1) {
