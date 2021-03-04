@@ -151,9 +151,10 @@ class Bot : TelegramLongPollingBot() {
                     socketTimeoutMillis = fiveMinutes
                     connectTimeoutMillis = fiveMinutes
                 }}
-            println("Ask: ${QAOpenAIRequest(prompt = prompt)}")
+            val q = QAOpenAIRequest(prompt = "Q: $prompt? \n")
+            println("Ask: $q")
             val response = client.post<QAOpenAIResponse>("https://api.openai.com/v1/engines/davinci/completions"){
-                body = QAOpenAIRequest(prompt = prompt)
+                body = q
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer ${System.getenv("OPENAI_API_KEY")}")
             }
