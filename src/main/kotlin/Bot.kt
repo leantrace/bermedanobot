@@ -203,7 +203,7 @@ class Bot : TelegramLongPollingBot() {
 
     fun sendImage(chatId: Long, template: String, texts: List<String> = emptyList()) = execute(SendPhoto().apply {
         setChatId(chatId)
-        setCaption(caption)
+        // setCaption(caption)
         runBlocking {
             val client = HttpClient(Apache) { install(JsonFeature) }
             val response = client.submitForm<ImageFlipResponse>(
@@ -233,6 +233,14 @@ class Bot : TelegramLongPollingBot() {
         // setPhoto(caption, Thread.currentThread().contextClassLoader.getResourceAsStream(name))
     })
 
+    fun sendCatImage(chatId: Long, mood: String?, caption: String?) = execute(SendPhoto().apply {
+        setChatId(chatId)
+        //setCaption(caption)
+        val m = if (mood != null) "/$mood" else ""
+        val c = if (caption != null) "/says/${caption.replace("cat\\s*".toRegex(), "")}" else ""
+        setPhoto("cat", URL("https://cataas.com/cat${m}${c}").openStream())
+    })
+
     override fun onUpdateReceived(update: Update) {
         if (update.message?.text != null) {
             val text = update.message.text.toLowerCase()
@@ -243,18 +251,23 @@ class Bot : TelegramLongPollingBot() {
 
             fun send(text: String) = execute(SendMessage(chatId, text))
 
-            fun sendCatImage(mood: String?, caption: String?) = execute(SendPhoto().apply {
-                setChatId(chatId)
-                setCaption(caption)
-                val m = if (mood != null) "/$mood" else ""
-                val c = if (caption != null) "/says/${caption.replace("cat\\s*".toRegex(), "")}" else ""
-                setPhoto("cat", URL("https://cataas.com/cat${m}${c}").openStream())
-            })
+
 
             when {
                 text.startsWith("/help") -> send("Chatte einfach ganz normal, ich werd schon etwas sagen, wenn ich etwas zu sagen habe...")
                 text.startsWith("/meme") -> send(Bot().templates.keys.toString())
-                listOf("cat").any { it in text } -> sendCatImage("", text)
+
+                text.startsWith("cat/") -> {
+                    val l = text.split("/")
+                    if (text.split("/").size == 1) {
+                        sendCatImage(chatId, "", l[1])
+                    } else if (text.split("/").size > 2) {
+                        sendCatImage(chatId, l[1], l[2])
+                    } else {
+                        sendCatImage(chatId, "", "miau")
+                    }
+                }
+
                 text.startsWith("meme/") -> {
                     val l = text.split("/")
                     if (text.split("/").size > 1) {
@@ -272,6 +285,7 @@ class Bot : TelegramLongPollingBot() {
                         }
                     }
                 }
+
                 text.startsWith("q/") || text.startsWith("question/") || text.startsWith("frage/") -> {
                     val l = text.split("/")
                     if (text.split("/").size > 1) {
@@ -282,6 +296,8 @@ class Bot : TelegramLongPollingBot() {
                         }
                     }
                 }
+
+                /* listOf("cat").any { it in text } -> sendCatImage("", text)
                 react.any { it in text } -> send(quotes.choose())
                 members.any { it.key in text } -> {
                     val memberKey = members.keys.find { it in text }
@@ -296,6 +312,7 @@ class Bot : TelegramLongPollingBot() {
                     else sendImage(chatId, "lama")
                 }
                 //rnd.nextDouble() < .1 -> send(quotes.choose())
+                */
             }
         }
     }
