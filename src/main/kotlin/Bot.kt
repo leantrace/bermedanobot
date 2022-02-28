@@ -254,7 +254,14 @@ class Bot : TelegramLongPollingBot() {
 
 
             when {
-                text.startsWith("/help") -> send("Chatte einfach ganz normal, ich werd schon etwas sagen, wenn ich etwas zu sagen habe...")
+                text.startsWith("/help") -> send(
+                    """Commands:
+                        | /meme -> shows possible memes
+                        | meme/{memeName}/text1/text2 -> generates a meme
+                        | cat/{text} -> send random cat image
+                        | bs/{text} -> generates bullshit
+                        | g/{question} -> answers questions
+                    """.trimMargin())
                 text.startsWith("/meme") -> send(Bot().templates.keys.toString())
 
                 text.startsWith("cat/") -> {
