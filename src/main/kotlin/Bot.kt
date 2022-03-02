@@ -137,7 +137,9 @@ class Bot : TelegramLongPollingBot() {
         "lonely" to "67452763",
         "luke" to "19194965",
         "pulp" to "124212",
-        "drake" to "91998305"
+        "drake" to "91998305",
+        "flip" to "1380694",
+        "flip2" to "35261774"
     )
 
     private fun qaOpenai(chatId: Long, prompt: String): Message = execute(SendMessage().apply {
